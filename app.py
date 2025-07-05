@@ -1,13 +1,11 @@
 import imageio
 import gradio as gr
-import random
 import torch
 import time
-import cv2
 import os
 import numpy as np
 import pytorch_lightning as pl
-import moviepy.editor as mp
+import moviepy as mp
 from pathlib import Path
 from mGPT.data.build_data import build_data
 from mGPT.models.build_model import build_model
@@ -18,6 +16,7 @@ from mGPT.render.pyrender.hybrik_loc2rot import HybrIKJointsToRotmat
 from mGPT.render.pyrender.smpl_render import SMPLRender
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
 import librosa
+from gradio import Textbox
 
 os.environ['DISPLAY'] = ':0.0'
 os.environ['PYOPENGL_PLATFORM'] = 'egl'
@@ -29,7 +28,7 @@ output_dir = Path(cfg.FOLDER)
 output_dir.mkdir(parents=True, exist_ok=True)
 pl.seed_everything(cfg.SEED_VALUE)
 if cfg.ACCELERATOR == "gpu":
-    device = torch.device("cuda")
+    device = torch.device("mps" if torch.backends.mps.is_available() else "cuda")
 else:
     device = torch.device("cpu")
 datamodule = build_data(cfg, phase="test")
@@ -513,7 +512,7 @@ with gr.Blocks(css=customCSS) as demo:
                     container=False)
 
             with gr.Row():
-                aud = gr.Audio(source="microphone",
+                aud = gr.Audio(sources=["microphone"],
                                label="Speak input",
                                type='filepath')
                 btn = gr.UploadButton("📁 Upload motion",

@@ -1,0 +1,3 @@
+[submodule "deps/whisper-large-v2"]
+	path = deps/whisper-large-v2
+	url = https://huggingface.co/openai/whisper-large-v2

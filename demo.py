@@ -141,7 +141,7 @@ def main():
     if cfg.ACCELERATOR == "gpu":
         os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(
             str(x) for x in cfg.DEVICE)
-        device = torch.device("cuda")
+        device = torch.device("mps" if torch.backends.mps.is_available() else "cuda")
 
     # Dataset
     datamodule = build_data(cfg)

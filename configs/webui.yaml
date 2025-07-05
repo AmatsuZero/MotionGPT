@@ -1,6 +1,6 @@
 NAME: Webui # Experiment name
-DEBUG: False # Debug mode
-ACCELERATOR: 'cpu' # Devices optioncal: “cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “mps, “auto”
+DEBUG: True # Debug mode
+ACCELERATOR: 'gpu' # Devices optioncal: “cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “mps, “auto”
 DEVICE: [0] # Index of gpus eg. [0] or [0,1,2,3]
 
 # Training configuration

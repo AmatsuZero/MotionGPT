@@ -3,9 +3,9 @@ import os
 import torch
 from torch import Tensor
 from torchmetrics import Metric
-from .utils import *
 from bert_score import score as score_bert
 import spacy
+from .utils import *
 from mGPT.config import instantiate_from_config
 
 class M2TMetrics(Metric):
