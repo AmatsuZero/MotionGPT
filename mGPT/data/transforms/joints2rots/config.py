@@ -1,5 +1,6 @@
 import numpy as np
 from mGPT.utils.joints import mmm_joints, smplh2mmm_indexes
+import os
 
 # Map joints Name to SMPL joints idx
 JOINT_MAP = {
@@ -112,8 +113,8 @@ MMM_JOINT_MAP = {
 # mmm_smpl_dix = smpl2mmm_indexes
 # mmm_smpl_dix = smplh2mmm_indexes
 # todo - configable
-SMPL_MODEL_DIR = "/apdcephfs/share_1227775/shingxchen/AIMotion/TMOSTData/deps/smpl_models/"
-GMM_MODEL_DIR = "/apdcephfs/share_1227775/shingxchen/AIMotion/TMOSTData/deps/smpl_models/"
-SMPL_MEAN_FILE = "/apdcephfs/share_1227775/shingxchen/AIMotion/TMOSTData/deps/smpl_models/neutral_smpl_mean_params.h5"
+SMPL_MODEL_DIR = os.path.join(os.getcwd(), "deps", "smpl_models")
+GMM_MODEL_DIR = SMPL_MODEL_DIR
+SMPL_MEAN_FILE = os.path.join(SMPL_MODEL_DIR, "neutral_smpl_mean_params.h5")
 # for collsion
-Part_Seg_DIR = "/apdcephfs/share_1227775/shingxchen/AIMotion/TMOSTData/deps/smpl_models/smplx_parts_segm.pkl"
+Part_Seg_DIR = os.path.join(SMPL_MODEL_DIR, "smplx_parts_segm.pkl")

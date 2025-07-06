@@ -165,3 +165,4 @@ deps/flan-t5-base
 deps/smpl_models
 deps/t2m
 cache/
+mesh/

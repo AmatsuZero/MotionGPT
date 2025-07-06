@@ -2,6 +2,26 @@
 
 from __future__ import division, print_function
 
+# 解决numpy类型兼容性问题
+import numpy as np
+
+try:
+    np.bool = np.bool_
+    np.int = np.int_
+    np.float = np.float_
+    np.complex = np.complex_
+    np.object = np.object_
+    np.unicode = np.unicode_
+    np.str = np.str_
+except AttributeError:
+    np.bool = bool
+    np.int = int
+    np.float = float
+    np.complex = complex
+    np.object = object
+    np.unicode = str
+    np.str = str
+
 import argparse
 import os
 import random
@@ -39,8 +59,10 @@ parser.add_argument(
     default=100,
     help="num of smplify iters"  # 100
 )
-parser.add_argument("--cuda", type=bool, default=True, help="enables cuda")
-parser.add_argument("--gpu_ids", type=int, default=0, help="choose gpu ids")
+parser.add_argument("--device", type=str, default="auto", 
+                   choices=["auto", "cuda", "mps", "cpu"],
+                   help="compute device (auto/cuda/mps/cpu)")
+parser.add_argument("--gpu_ids", type=int, default=0, help="choose gpu ids (for cuda only)")
 parser.add_argument("--num_joints", type=int, default=22, help="joint number")
 parser.add_argument("--joint_category",
                     type=str,
@@ -72,7 +94,25 @@ opt = parser.parse_args()
 print(opt)
 
 # ---load predefined something
-device = torch.device("cuda:" + str(opt.gpu_ids) if opt.cuda else "cpu")
+def select_device(device_type="auto", gpu_id=0):
+    """自动选择可用设备"""
+    if device_type == "cuda":
+        if torch.cuda.is_available():
+            return torch.device(f"cuda:{gpu_id}")
+    elif device_type == "mps":
+        if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            return torch.device("mps")
+    elif device_type == "cpu":
+        return torch.device("cpu")
+    
+    # 自动选择逻辑
+    if torch.cuda.is_available():
+        return torch.device(f"cuda:{gpu_id}")
+    if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        return torch.device("mps")
+    return torch.device("cpu")
+
+device = select_device(opt.device, opt.gpu_ids)
 print(config.SMPL_MODEL_DIR)
 # smplmodel = smplx.create(config.SMPL_MODEL_DIR,
 #                          model_type="smplh", gender="neutral", ext="npz",
@@ -153,6 +193,7 @@ for path in paths:
     data = np.load(path)
     if len(data.shape) > 3:
         data = data[0]
+    print(f"Loaded data shape: {data.shape}")  # 打印数据形状用于调试
 
     # check input joint or meshes
     if data.shape[1] > 1000:
@@ -198,7 +239,21 @@ for path in paths:
             continue
 
         joints3d = data[idx]  # *1.2 #scale problem [check first]
-        keypoints_3d[0, :, :] = torch.Tensor(joints3d).to(device).float()
+        # 检查并转换关节数据维度
+        joints_tensor = torch.Tensor(joints3d).to(device).float()
+        if joints_tensor.shape[0] == 263:  # 如果是SMPL参数格式
+            # 从SMPL参数中提取关节位置
+            with torch.no_grad():
+                output = smplmodel(
+                    body_pose=joints_tensor[3:72].unsqueeze(0),
+                    global_orient=joints_tensor[:3].unsqueeze(0),
+                    betas=joints_tensor[72:82].unsqueeze(0),
+                    return_verts=False
+                )
+                joints_tensor = output.joints.squeeze(0)[:opt.num_joints]
+        elif joints_tensor.shape[0] == opt.num_joints * 3:  # 如果是展平的关节坐标
+            joints_tensor = joints_tensor.reshape(opt.num_joints, 3)
+        keypoints_3d[0, :, :] = joints_tensor
 
         if idx == 0:
             pred_betas[0, :] = init_mean_shape

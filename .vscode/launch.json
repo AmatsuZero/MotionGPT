@@ -5,6 +5,32 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Blender Script Debug",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/render.py",
+            "python": "/Applications/Blender.app/Contents/Resources/4.4/python/bin/python3.11",
+            "args": [
+                "--", "--cfg=./configs/render.yaml", "--dir=cache", "--mode=video"
+            ],
+            "env": {
+                "PYTHONPATH": "/Applications/Blender.app/Contents/Resources/4.4/scripts/modules:/Applications/Blender.app/Contents/Resources/4.4/python/lib/python3.11"
+            }
+        },
+        {
+            "name": "fit",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/fit.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--dir",
+                "cache",
+                "--save_folder",
+                "mesh"
+            ]
+        },
+        {
             "name": "webui",
             "type": "debugpy",
             "request": "launch",
