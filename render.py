@@ -6,6 +6,8 @@ import natsort
 from pathlib import Path
 from argparse import ArgumentParser
 
+sys.path.append('/Users/samzhjiang/.local/lib/python3.11/site-packages')
+
 try:
     import bpy
 

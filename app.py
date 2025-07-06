@@ -5,7 +5,7 @@ import time
 import os
 import numpy as np
 import pytorch_lightning as pl
-import moviepy as mp
+import moviepy.editor as mp
 from pathlib import Path
 from mGPT.data.build_data import build_data
 from mGPT.models.build_model import build_model

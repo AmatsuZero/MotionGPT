@@ -84,18 +84,21 @@ def load_example_input(txt_path, task, model):
                 ) + f'><motion_id_{model.codebook_size+1}>'
                 motion_split2 = f'<motion_id_{model.codebook_size}>' + '>'.join(
                     motion_splited[split:])
-
                 motion_masked = '>'.join(
                     motion_splited[:split2]
                 ) + '>' + f'<motion_id_{model.codebook_size+2}>' * (
                     split3 - split2) + '>'.join(motion_splited[split3:])
-
-            texts.append(
-                line.split('#')[0].replace(
-                    '<motion>', motion_token_string).replace(
-                        '<Motion_Placeholder_s1>', motion_split1).replace(
-                            '<Motion_Placeholder_s2>', motion_split2).replace(
-                                '<Motion_Placeholder_Masked>', motion_masked))
+                
+                # 只有存在特征文件时才进行替换
+                texts.append(
+                    line.split('#')[0].replace(
+                        '<motion>', motion_token_string).replace(
+                            '<Motion_Placeholder_s1>', motion_split1).replace(
+                                '<Motion_Placeholder_s2>', motion_split2).replace(
+                                    '<Motion_Placeholder_Masked>', motion_masked))
+            else:
+                # 特征文件不存在时，保留原始文本
+                texts.append(line.split('#')[0])
 
     return_dict = {
         'text': texts,
