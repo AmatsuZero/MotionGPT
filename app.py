@@ -581,4 +581,4 @@ with gr.Blocks(css=customCSS) as demo:
 demo.queue()
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=8888, debug=True)
+    demo.launch(server_name="0.0.0.0", debug=True)

@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "/Applications/Blender.app/Contents/Resources/4.5/python/lib/python3.11/site-packages",
+        "~/Application Support/Blender/4.5/scripts/addons"
+    ]
+}

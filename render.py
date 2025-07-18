@@ -6,15 +6,8 @@ import natsort
 from pathlib import Path
 from argparse import ArgumentParser
 
-sys.path.append('/Users/samzhjiang/.local/lib/python3.11/site-packages')
-
 try:
     import bpy
-
-    sys.path.append(os.path.dirname(bpy.data.filepath))
-
-    # local packages
-    sys.path.append(os.path.expanduser("~/.local/lib/python3.9/site-packages"))
 except ImportError:
     raise ImportError(
         "Blender is not properly installed or not launch properly. See README.md to have instruction on how to install and use blender."
